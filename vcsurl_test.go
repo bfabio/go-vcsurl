@@ -94,14 +94,26 @@ func TestGitLab(t *testing.T) {
 	AssertEqual(t, IsFile(url), true)
 	AssertEqual(t, IsRepo(url), false)
 	AssertEqual(t, IsRawFile(url), false)
-	AssertEqual(t, GetRawFile(url).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com/raw/master/LICENSE")
-	AssertEqual(t, GetRawRoot(url).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com/raw/master/")
+	AssertEqual(t, GetRawFile(url).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com/-/raw/master/LICENSE")
+	AssertEqual(t, GetRawRoot(url).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com/-/raw/master/")
 	AssertEqual(t, IsRawRoot(GetRawRoot(url)), true)
 	AssertEqual(t, GetRepo(url).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com")
 	AssertEqual(t, GetRepo(GetRawRoot(url)).String(), "https://gitlab.com/gitlab-org/gitlab-services/design.gitlab.com")
 
+	// Self hosted GitLab
 	url, _ = url.Parse("https://dev.funkwhale.audio/funkwhale/ansible")
 	AssertEqual(t, IsGitLab(url), true)
+
+	// Self hosted GitLab with HTTP URL and paths namespaced with '-'.
+	url, _ = url.Parse("http://dev.funkwhale.audio/funkwhale/ansible/-/blob/master/README.md")
+	AssertEqual(t, IsGitLab(url), true)
+	AssertEqual(t, IsRepo(url), false)
+	AssertEqual(t, IsRawFile(url), false)
+	AssertEqual(t, GetRawFile(url).String(), "http://dev.funkwhale.audio/funkwhale/ansible/-/raw/master/README.md")
+	AssertEqual(t, GetRawRoot(url).String(), "http://dev.funkwhale.audio/funkwhale/ansible/-/raw/master/")
+	AssertEqual(t, IsRawRoot(GetRawRoot(url)), true)
+	AssertEqual(t, GetRepo(url).String(), "http://dev.funkwhale.audio/funkwhale/ansible")
+	AssertEqual(t, GetRepo(GetRawRoot(url)).String(), "http://dev.funkwhale.audio/funkwhale/ansible")
 }
 
 // AssertEqual checks if values are equal
